@@ -1,21 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, Modal, Typography,
+  Container,
+  Modal,
+  Typography,
+  Grid,
+  Paper,
+  Box,
+  TextField,
 } from '@mui/material';
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+import Cards from 'react-credit-cards-2';
+import 'react-credit-cards-2/dist/es/styles-compiled.css';
 
 function ModalCard({ open, handleClose }) {
+  const [state, setState] = useState({
+    number: '',
+    expiry: '',
+    cvc: '',
+    name: '',
+    focus: '',
+  });
+
+  const handleInputChange = (evt) => {
+    const { name, value } = evt.target;
+
+    setState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputFocus = (evt) => {
+    setState((prev) => ({ ...prev, focus: evt.target.name }));
+  };
   return (
     <Modal
       open={open}
@@ -23,14 +37,49 @@ function ModalCard({ open, handleClose }) {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Text in a modal
-        </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        </Typography>
-      </Box>
+      <Container maxWidth="md">
+        <Paper
+          component={Box}
+          p={2}
+          elevation={0}
+          sx={{ height: '100%', mt: { xs: 3, md: 14 } }}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Registrar tarjeta de credito
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+          <Grid container pt={5} justifyContent="center">
+            <Grid item xs={12} sm={5}>
+              <TextField
+                id="outlined-basic"
+                label="Outlined"
+                variant="outlined"
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                name="number"
+                placeholder="Card Number"
+                value={state.number}
+                onChange={handleInputChange}
+                onFocus={handleInputFocus}
+                maxLengt={16}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={5}>
+              <Cards
+                number={state.number}
+                expiry={state.expiry}
+                cvc={state.cvc}
+                name={state.name}
+                focused={state.focus}
+              />
+            </Grid>
+
+          </Grid>
+        </Paper>
+
+      </Container>
     </Modal>
   );
 }

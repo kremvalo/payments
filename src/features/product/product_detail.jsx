@@ -62,7 +62,7 @@ export default function ProductDetail() {
                 style={{ height: '100%' }}
               >
                 <section>
-                  <Typography variant="caption" paddingTop={6}>
+                  <Typography variant="caption" pt={6}>
                     {productData.category}
                   </Typography>
                   <Typography variant="h3" fontWeight="bold">
@@ -71,7 +71,7 @@ export default function ProductDetail() {
                   <Typography variant="p" gutterBottom>
                     {productData.description}
                   </Typography>
-                  <Typography variant="h3" gutterBottom paddingTop={4}>
+                  <Typography variant="h3" gutterBottom pt={4}>
                     $
                     {productData.price}
                   </Typography>
