@@ -8,12 +8,11 @@ function ProductImageGallery({ images }) {
   const validImages = images.filter(
     (image) => image && typeof image === 'string' && image.trim() !== '',
   );
+  const [currentImage, setCurrentImage] = useState(0);
 
   if (validImages.length === 0) {
     return <div>No hay imágenes disponibles</div>;
   }
-
-  const [currentImage, setCurrentImage] = useState(0);
 
   return (
     <Container maxWidth="md">
