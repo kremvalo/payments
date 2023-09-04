@@ -10,6 +10,7 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
+import secureLocalStorage from 'react-secure-storage';
 
 import { getProductAsync } from './product_slice';
 
@@ -18,16 +19,24 @@ import ProductGallery from '../../components/product_galery';
 import ProductColorBar from '../../components/colors_bar';
 import CustomAccordion from '../../components/custom_accordion';
 import ModalCard from '../../components/modal_card';
+import BackdropSummary from '../../components/backdrop_summary';
 
 export default function ProductDetail() {
   const { productData, loading } = useSelector((state) => state.product);
   const dispatch = useDispatch();
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [openModal, setModalOpen] = React.useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
+
+  const [openBackdrop, setackdropOpen] = React.useState(false);
+  const handleackdropOpen = () => setackdropOpen(true);
+  const handleackdropClose = () => setackdropOpen(false);
 
   useEffect(() => {
+    secureLocalStorage.setItem('productData', null);
+    secureLocalStorage.setItem('cardData', null);
+    secureLocalStorage.setItem('cardNumberWithoutExposure', null);
     dispatch(getProductAsync());
   }, [dispatch]);
 
@@ -90,7 +99,8 @@ export default function ProductDetail() {
                       size="large"
                       color="inherit"
                       onClick={() => {
-                        handleOpen();
+                        secureLocalStorage.setItem('productData', productData);
+                        handleModalOpen();
                       }}
                     >
                       Pagar con tarjeta de credito
@@ -100,7 +110,12 @@ export default function ProductDetail() {
               </Paper>
             </Grid>
           </Grid>
-          <ModalCard open={open} handleClose={handleClose} />
+          <ModalCard
+            open={openModal}
+            handleClose={handleModalClose}
+            openBackdrop={handleackdropOpen}
+          />
+          <BackdropSummary open={openBackdrop} handleClose={handleackdropClose} />
         </Container>
       )
   );

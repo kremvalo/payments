@@ -12,12 +12,13 @@ import {
 } from '@mui/material';
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
+import secureLocalStorage from 'react-secure-storage';
 
-function ModalCard({ open, handleClose }) {
+function ModalCard({ open, handleClose, openBackdrop }) {
   const maxLengthNumber = 16;
   const maxLengthExpiry = 4;
   const maxLengthCvc = 3;
-  const [state, setState] = useState({
+  const [cardState, setCardState] = useState({
     number: '',
     expiry: '',
     cvc: '',
@@ -25,15 +26,10 @@ function ModalCard({ open, handleClose }) {
     focus: '',
   });
 
-  const validateEmptyInput = () => {
-    if (state.number.length > 0
-        && state.name.length > 0
-        && state.expiry.length > 0
-        && state.cvc.length > 0) {
-      return false;
-    }
-    return true;
-  };
+  const validateEmptyInput = () => !(cardState.number.length > 0
+        && cardState.name.length > 0
+        && cardState.expiry.length > 0
+        && cardState.cvc.length > 0);
 
   const handleInputChange = (evt) => {
     const { name, value } = evt.target;
@@ -42,12 +38,12 @@ function ModalCard({ open, handleClose }) {
       || (name === 'expiry' && evt.target.value.length <= maxLengthExpiry)
       || (name === 'cvc' && evt.target.value.length <= maxLengthCvc)
       || (name === 'name' && evt.target.value.length <= 30)) {
-      setState((prev) => ({ ...prev, [name]: value }));
+      setCardState((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleInputFocus = (evt) => {
-    setState((prev) => ({ ...prev, focus: evt.target.name }));
+    setCardState((prev) => ({ ...prev, focus: evt.target.name }));
   };
   return (
     <Modal
@@ -80,7 +76,7 @@ function ModalCard({ open, handleClose }) {
                     name="number"
                     type="number"
                     placeholder="Número de tarjeta"
-                    value={state.number}
+                    value={cardState.number}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
                     fullWidth
@@ -93,7 +89,7 @@ function ModalCard({ open, handleClose }) {
                     inputProps={{ maxLength: 100 }}
                     name="name"
                     placeholder="Nombre"
-                    value={state.name}
+                    value={cardState.name}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
                     fullWidth
@@ -105,8 +101,9 @@ function ModalCard({ open, handleClose }) {
                     variant="outlined"
                     inputProps={{ maxLength: maxLengthNumber }}
                     name="expiry"
+                    type="number"
                     placeholder="Vigencia"
-                    value={state.expiry}
+                    value={cardState.expiry}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
                   />
@@ -117,8 +114,9 @@ function ModalCard({ open, handleClose }) {
                     variant="outlined"
                     inputProps={{ maxLength: 100 }}
                     name="cvc"
+                    type="number"
                     placeholder="CVC"
-                    value={state.cvc}
+                    value={cardState.cvc}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
                   />
@@ -132,11 +130,11 @@ function ModalCard({ open, handleClose }) {
             </Grid>
             <Grid item xs={12} sm={6} pl={6} pt={3} justifyContent="center" justifyItems="center">
               <Cards
-                number={state.number}
-                expiry={state.expiry}
-                cvc={state.cvc}
-                name={state.name}
-                focused={state.focus}
+                number={cardState.number}
+                expiry={cardState.expiry}
+                cvc={cardState.cvc}
+                name={cardState.name}
+                focused={cardState.focus}
               />
             </Grid>
 
@@ -149,6 +147,14 @@ function ModalCard({ open, handleClose }) {
               color="inherit"
               disabled={validateEmptyInput()}
               onClick={() => {
+                secureLocalStorage.setItem('cardData', cardState);
+                secureLocalStorage.setItem('cardDataWithoutExposure', {
+                  number: cardState.number.slice(-4),
+                  name: cardState.name,
+                  expiry: cardState.expiry,
+                });
+                handleClose();
+                openBackdrop();
               }}
             >
               Ir a pagar
@@ -164,6 +170,7 @@ function ModalCard({ open, handleClose }) {
 ModalCard.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  openBackdrop: PropTypes.func.isRequired,
 };
 
 export default ModalCard;
