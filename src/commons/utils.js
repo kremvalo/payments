@@ -1,4 +1,5 @@
 export default function hideCardDigits(number) {
+
   if (number.length < 4) {
     return 'Número de tarjeta inválido';
   }
