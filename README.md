@@ -1,10 +1,34 @@
-# Getting Started with Create React App and Redux
+# Payments
 
+This project is a practice to make a responsive SPA for a checkout, including product detail screen, form to add credit card and a summary to finish a buy. 
+-Used React.js 
+-Used Redux Toolkit
+-Used MaterialUi
+-Used react-secure-storage lo save data in the secure way.
+-Used react-credit-cards-2
+
+<img width="856" alt="image" src="https://github.com/kremvalo/payments/assets/32576306/79f3313b-6e8c-4c14-9322-1614b92f01e8">
+
+<img width="1240" alt="image" src="https://github.com/kremvalo/payments/assets/32576306/df23f234-f516-4716-9853-d02abadec105">
+
+<img width="1332" alt="image" src="https://github.com/kremvalo/payments/assets/32576306/84cf1903-f6a3-4d55-8a67-d5045469c32b">
+
+<img width="377" alt="image" src="https://github.com/kremvalo/payments/assets/32576306/8cba4511-5fb2-4c00-99eb-dbec2637a220">
+
+<img width="379" alt="image" src="https://github.com/kremvalo/payments/assets/32576306/57ab33f2-9a31-47b7-bbbb-754ead536d3b">
+
+<img width="378" alt="image" src="https://github.com/kremvalo/payments/assets/32576306/17f9bff0-3421-4ca8-92b2-b101ef4397dc">
+
+# Getting Started
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm install`
+
+Before you can start this application, first you must to install no node_modules. 
 
 ### `npm start`
 
