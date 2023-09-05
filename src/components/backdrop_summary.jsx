@@ -74,9 +74,9 @@ function BackdropSummary({ open, handleClose }) {
                   <Grid item xs={5} sm={5}>
                     <Typography variant="h6">
                       $
-                      {(productData != null
-                        ? parseInt(productData.price, 10).toLocaleString()
-                        : 0) * 7}
+                      {productData != null
+                        ? parseInt(productData.price * 7, 10).toLocaleString()
+                        : 0}
                     </Typography>
                   </Grid>
                 </Grid>
