@@ -34,18 +34,20 @@ export default function ProductDetail() {
   const handleackdropClose = () => setackdropOpen(false);
 
   useEffect(() => {
-    secureLocalStorage.setItem('productData', null);
-    secureLocalStorage.setItem('cardData', null);
-    secureLocalStorage.setItem('cardNumberWithoutExposure', null);
     dispatch(getProductAsync());
+
+    const cardData = secureLocalStorage.getItem('cardData');
+    if (cardData != null) {
+      handleModalOpen();
+    }
   }, [dispatch]);
 
   return (
     loading
       ? (
-        <Container>
+        <Grid className="custom-loader-content">
           <CircularProgress />
-        </Container>
+        </Grid>
       )
       : (
         <Container maxWidth="lg">
@@ -82,7 +84,7 @@ export default function ProductDetail() {
                   </Typography>
                   <Typography variant="h3" gutterBottom pt={4}>
                     $
-                    {productData.price}
+                    {parseInt(productData.price, 10).toLocaleString()}
                   </Typography>
                   <ProductColorBar colors={productData.colors} />
                   <CustomAccordion
