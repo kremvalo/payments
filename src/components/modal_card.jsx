@@ -62,7 +62,7 @@ function ModalCard({ open, handleClose, openBackdrop }) {
           component={Box}
           p={4}
           elevation={4}
-          sx={{ height: '100%', mt: { xs: 3, md: 14 } }}
+          sx={{ height: '100%', mt: { xs: 3 } }}
         >
           <Typography id="modal-modal-title" variant="h5" component="h2" fontWeight="bold">
             Registra tu tarjeta de credito
