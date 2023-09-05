@@ -8,27 +8,46 @@ import {
   Paper,
   Box,
   TextField,
+  Button,
 } from '@mui/material';
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
+import secureLocalStorage from 'react-secure-storage';
 
-function ModalCard({ open, handleClose }) {
-  const [state, setState] = useState({
-    number: '',
-    expiry: '',
-    cvc: '',
-    name: '',
+import hideCardDigits from '../commons/utils';
+
+function ModalCard({ open, handleClose, openBackdrop }) {
+  const maxLengthNumber = 16;
+  const maxLengthCvc = 3;
+  const maxLengthExpiry = 4;
+
+  const cardData = secureLocalStorage.getItem('cardData');
+  const [cardState, setCardState] = useState({
+    number: cardData != null ? cardData.number : '',
+    expiry: cardData != null ? cardData.expiry : '',
+    cvc: cardData != null ? cardData.cvc : '',
+    name: cardData != null ? cardData.name : '',
     focus: '',
   });
+
+  const validateEmptyInput = () => !(cardState.number.length > 0
+        && cardState.name.length > 0
+        && cardState.expiry.length > 0
+        && cardState.cvc.length > 0);
 
   const handleInputChange = (evt) => {
     const { name, value } = evt.target;
 
-    setState((prev) => ({ ...prev, [name]: value }));
+    if ((name === 'number' && evt.target.value.length <= maxLengthNumber)
+      || (name === 'cvc' && evt.target.value.length <= maxLengthCvc)
+      || (name === 'expiry' && evt.target.value.length <= maxLengthExpiry)
+      || (name === 'name' && evt.target.value.length <= 30)) {
+      setCardState((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleInputFocus = (evt) => {
-    setState((prev) => ({ ...prev, focus: evt.target.name }));
+    setCardState((prev) => ({ ...prev, focus: evt.target.name }));
   };
   return (
     <Modal
@@ -36,49 +55,115 @@ function ModalCard({ open, handleClose }) {
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      className="custom-modal"
     >
-      <Container maxWidth="md">
+      <Container maxWidth="md" className="custom-modal-content">
         <Paper
           component={Box}
-          p={2}
-          elevation={0}
+          p={4}
+          elevation={4}
           sx={{ height: '100%', mt: { xs: 3, md: 14 } }}
         >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Registrar tarjeta de credito
+          <Typography id="modal-modal-title" variant="h5" component="h2" fontWeight="bold">
+            Registra tu tarjeta de credito
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            Por favor a continuación digita los datos de tu tarjeta.
           </Typography>
-          <Grid container pt={5} justifyContent="center">
+          <Grid container pt={5} justifyContent="center" justifyItems="center">
             <Grid item xs={12} sm={5}>
-              <TextField
-                id="outlined-basic"
-                label="Outlined"
-                variant="outlined"
-                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                name="number"
-                placeholder="Card Number"
-                value={state.number}
-                onChange={handleInputChange}
-                onFocus={handleInputFocus}
-                maxLengt={16}
-                fullWidth
-              />
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    id="number"
+                    variant="outlined"
+                    inputProps={{ maxLength: maxLengthNumber }}
+                    name="number"
+                    type="number"
+                    placeholder="Número de tarjeta"
+                    value={cardState.number}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    id="name"
+                    variant="outlined"
+                    inputProps={{ maxLength: 100 }}
+                    name="name"
+                    placeholder="Nombre"
+                    value={cardState.name}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6}>
+                  <TextField
+                    id="expiry"
+                    variant="outlined"
+                    name="expiry"
+                    placeholder="Vigencia"
+                    value={cardState.expiry}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6}>
+                  <TextField
+                    id="cvc"
+                    variant="outlined"
+                    inputProps={{ maxLength: 100 }}
+                    name="cvc"
+                    type="number"
+                    placeholder="CVC"
+                    value={cardState.cvc}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <Typography variant="caption">
+                    Todos los campos con obligatorios*
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={6} sx={{ height: '100%', mt: { xs: 3, md: 2 }, pl: { md: 8 } }}>
               <Cards
-                number={state.number}
-                expiry={state.expiry}
-                cvc={state.cvc}
-                name={state.name}
-                focused={state.focus}
+                number={cardState.number}
+                expiry={cardState.expiry}
+                cvc={cardState.cvc}
+                name={cardState.name}
+                focused={cardState.focus}
               />
             </Grid>
 
           </Grid>
-        </Paper>
 
+          <Box sx={{ '& button': { mt: 5, width: '100%' } }}>
+            <Button
+              variant="outlined"
+              size="large"
+              color="inherit"
+              disabled={validateEmptyInput()}
+              onClick={() => {
+                secureLocalStorage.setItem('cardData', cardState);
+                secureLocalStorage.setItem('cardDataWithoutExposure', {
+                  number: hideCardDigits(cardState.number),
+                  name: cardState.name,
+                  expiry: cardState.expiry,
+                });
+                handleClose();
+                openBackdrop();
+              }}
+            >
+              Ir a pagar
+            </Button>
+          </Box>
+        </Paper>
       </Container>
     </Modal>
   );
@@ -87,6 +172,7 @@ function ModalCard({ open, handleClose }) {
 ModalCard.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  openBackdrop: PropTypes.func.isRequired,
 };
 
 export default ModalCard;
