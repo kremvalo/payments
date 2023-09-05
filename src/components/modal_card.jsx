@@ -40,9 +40,9 @@ function ModalCard({ open, handleClose }) {
       <Container maxWidth="md">
         <Paper
           component={Box}
-          p={2}
-          elevation={0}
-          sx={{ height: '100%', mt: { xs: 3, md: 14 } }}
+          p={4}
+          elevation={4}
+          sx={{ height: '100%', mt: { xs: 3 } }}
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Registrar tarjeta de credito
